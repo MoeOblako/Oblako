@@ -15,7 +15,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CarpetGram | Главная</title>
+    <title>CarpetGram | Социальная сеть ковров</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -59,6 +59,22 @@ body {
     display: inline-block;
 }
 
+/* --- УПРАВЛЕНИЕ СЕКЦИЯМИ (Эмуляция страниц) --- */
+.content-section {
+    display: none; /* Скрыто по умолчанию */
+    padding-top: 75px; /* Отступ сверху для хедера */
+    padding-bottom: 15px; /* Отступ снизу */
+    min-height: calc(100vh - 70px);
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.content-section.active {
+    display: block; /* Отображаем активную секцию */
+}
+
+
 /* --- Верхний Заголовок (Логотип и Название) --- */
 .top-header {
     position: fixed;
@@ -86,7 +102,6 @@ body {
     width: 30px;
     height: 30px;
     margin-right: 8px;
-    /* Иконка ковра из интернета не будет градиентной напрямую, но градиент применяется к тексту */
 }
 
 .logo-text {
@@ -122,7 +137,7 @@ body {
     flex: 1;
 }
 
-.nav-item:hover, .nav-item.active {
+.nav-item.active {
     color: var(--primary-color);
 }
 
@@ -149,20 +164,23 @@ body {
     transition: transform 0.2s;
 }
 
+.add-button.active {
+    /* Если кнопка активна, дадим ей немного иной стиль, например, яркую тень */
+    box-shadow: 0 0 0 4px rgba(255, 87, 34, 0.3), var(--shadow-heavy);
+}
+
 .add-button:active {
     transform: translateY(-13px) scale(0.98);
 }
 
 .add-icon {
-    color: white !important; /* Принудительно белый для иконки на градиенте */
+    color: white !important;
     -webkit-text-fill-color: white !important;
 }
 
 /* --- Лента Постов (Главная) --- */
 .post-feed {
-    padding: 75px 15px 15px 15px; /* Отступ сверху для хедера */
-    max-width: 600px;
-    margin: 0 auto;
+    padding: 0 15px;
 }
 
 .post-card {
@@ -192,7 +210,7 @@ body {
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 10px;
-    background-color: var(--gray-area); /* Серый фон, пока картинка грузится */
+    background-color: var(--gray-area);
 }
 
 .post-text {
@@ -238,10 +256,10 @@ body {
 
 /* Стиль для активных/залитых иконок */
 .like-button.active {
-    color: var(--accent-color); /* Заливка лайка оранжевым */
+    color: var(--accent-color);
 }
 .dislike-button.active {
-    color: var(--secondary-color); /* Заливка дизлайка синим */
+    color: var(--secondary-color);
 }
 
 /* --- Модальное Окно (Общий стиль) --- */
@@ -253,10 +271,10 @@ body {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: none; /* Скрыто по умолчанию JS */
+    background-color: rgba(0, 0, 0, 0.6); /* Более темный оверлей для модалок */
+    display: none;
     justify-content: center;
-    align-items: center;
+    align-items: flex-end; /* Модалки появляются снизу или на весь экран */
 }
 
 .modal-content {
@@ -267,9 +285,16 @@ body {
     max-height: 90%;
     display: flex;
     flex-direction: column;
-    position: absolute;
-    bottom: 0;
+    position: relative;
+    box-shadow: var(--shadow-heavy);
+    animation: slideUp 0.3s ease-out;
 }
+
+@keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0.8; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
 
 .close-button {
     color: #aaa;
@@ -287,6 +312,7 @@ body {
 /* --- Модальное Окно Комментариев --- */
 .comments-content {
     padding: 20px;
+    height: 70vh; /* Занимает 70% высоты экрана для удобства */
 }
 
 .comments-header {
@@ -322,6 +348,8 @@ body {
 .comment-form {
     display: flex;
     gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
 }
 
 .comment-form input {
@@ -342,12 +370,21 @@ body {
 }
 
 /* --- Модальное Окно Поиска --- */
+.search-modal {
+    align-items: flex-start; /* Поиск появляется сверху */
+}
+
 .search-content {
     max-height: 100%;
-    bottom: initial; /* Сбросить bottom: 0; */
-    top: 0;
     border-radius: 0;
+    animation: slideDown 0.3s ease-out;
 }
+
+@keyframes slideDown {
+    from { transform: translateY(-100%); opacity: 0.8; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
 
 .search-header {
     display: flex;
@@ -370,14 +407,12 @@ body {
 .search-results {
     padding: 15px;
     overflow-y: auto;
-    max-height: calc(100vh - 70px); /* Высота модала поиска - высота хедера */
+    max-height: calc(100vh - 70px); 
 }
 
-/* --- Страница Создания Поста --- */
+/* --- Страница Создания Поста (Теперь это секция) --- */
 .create-post-container {
-    padding: 75px 15px 15px 15px;
-    max-width: 600px;
-    margin: 0 auto;
+    padding: 15px;
 }
 
 .create-post-container h1 {
@@ -460,15 +495,34 @@ body {
 <body>
 
     <header class="top-header">
-        <a href="index.html" class="logo-link">
+        <a href="#" class="logo-link" onclick="showMainPage()">
             <img src="https://img.icons8.com/color/48/000000/carpet.png" alt="Логотип ковра" class="logo-icon">
             <span class="logo-text">CarpetGram</span>
         </a>
     </header>
 
-    <main class="post-feed" id="post-feed-container">
-        <div class="loading-message" id="loading-message">Загрузка постов...</div>
+    <main class="content-section active" id="main-feed-section">
+        <div class="post-feed" id="post-feed-container">
+            <div class="loading-message" id="loading-message">Загрузка постов...</div>
+        </div>
     </main>
+
+    <section class="content-section create-post-container" id="create-post-section">
+        <h1>Поделитесь вашим ковром</h1>
+        <div class="post-form">
+            <input type="text" id="post-title" placeholder="Заголовок поста..." required>
+
+            <div class="image-upload-area" id="image-upload-area">
+                <span class="material-symbols-outlined image-icon">branding_watermark</span>
+                <p>Перетащите или вставьте URL изображения ковра</p>
+                <input type="url" id="image-url" placeholder="URL изображения..." required>
+            </div>
+
+            <textarea id="post-text" placeholder="Текст поста о вашем ковре..." rows="6" required></textarea>
+
+            <button id="publish-button" onclick="publishPost()">Опубликовать</button>
+        </div>
+    </section>
 
     <div id="comments-modal" class="modal">
         <div class="modal-content comments-content">
@@ -497,12 +551,12 @@ body {
     </div>
 
     <nav class="status-bar">
-        <a href="index.html" class="nav-item">
+        <a href="#" class="nav-item active" onclick="showMainPage()">
             <span class="material-symbols-outlined nav-icon">home</span>
             <span class="nav-label">Главная</span>
         </a>
 
-        <button class="add-button" onclick="window.location.href='post.html'">
+        <button class="add-button" onclick="showCreatePost()">
             <span class="material-symbols-outlined add-icon">add</span>
         </button>
 
@@ -528,6 +582,41 @@ body {
         const database = app.database();
         const postsRef = database.ref('posting');
 
+        let allPostsData = {}; // Хранить все посты для поиска
+
+        // --- Управление секциями (Эмуляция страниц) ---
+        function setActiveSection(sectionId) {
+            // Скрываем все секции, кроме модальных окон (они управляются отдельно)
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // Снимаем активный класс со всех кнопок навигации
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector('.add-button').classList.remove('active');
+
+            // Показываем нужную секцию
+            document.getElementById(sectionId).classList.add('active');
+
+            // Устанавливаем активный класс на кнопку навигации
+            if (sectionId === 'main-feed-section') {
+                document.querySelector('.nav-item:nth-child(1)').classList.add('active');
+            } else if (sectionId === 'create-post-section') {
+                document.querySelector('.add-button').classList.add('active');
+            }
+        }
+
+        function showMainPage() {
+            setActiveSection('main-feed-section');
+            closeSearchModal(); // Убедимся, что поиск закрыт
+        }
+
+        function showCreatePost() {
+            setActiveSection('create-post-section');
+            closeSearchModal(); // Убедимся, что поиск закрыт
+        }
+        
         // --- Утилиты для Local Storage (Сохранение действий пользователя) ---
         const userActions = JSON.parse(localStorage.getItem('userActions')) || {};
 
@@ -544,46 +633,34 @@ body {
             return userActions[postId] && userActions[postId][type];
         }
 
-        // --- Обработчик Лайков/Дизлайков ---
+        // --- Обработчик Лайков/Дизлайков (без изменений) ---
         function handleLikeDislike(postId, action) {
             const isLiking = action === 'like';
-            const isDisliking = action === 'dislike';
-
             const currentState = getUserAction(postId, action);
-            const oppositeState = getUserAction(postId, isLiking ? 'dislike' : 'like');
+            const oppositeAction = isLiking ? 'dislike' : 'like';
+            const oppositeState = getUserAction(postId, oppositeAction);
 
-            // 1. Обновляем Firebase
             let updates = {};
 
-            // Если состояние меняется (на лайк/дизлайк)
             if (!currentState) {
-                // Увеличиваем счетчик текущего действия
                 updates[`/${action}s`] = firebase.database.ServerValue.increment(1);
 
-                // Если было противоположное действие, отменяем его
                 if (oppositeState) {
-                    const oppositeAction = isLiking ? 'dislike' : 'like';
                     updates[`/${oppositeAction}s`] = firebase.database.ServerValue.increment(-1);
-                    saveUserAction(postId, oppositeAction); // Обновляем LS для противоположного
+                    saveUserAction(postId, oppositeAction); 
                 }
-            }
-            // Если отменяем действие (повторное нажатие)
-            else {
+            } else {
                 updates[`/${action}s`] = firebase.database.ServerValue.increment(-1);
             }
 
-            // 2. Обновляем Local Storage
             saveUserAction(postId, action);
 
-            // 3. Отправляем изменения в Firebase
             database.ref(`posting/${postId}`).update(updates).then(() => {
-                // Перерисовка поста для обновления иконок и счетчиков
-                renderPosts();
+                // После изменения данных Firebase автоматически обновит ленту благодаря .on('value')
             }).catch(error => {
                 console.error("Ошибка при обновлении счетчиков:", error);
             });
         }
-
 
         // --- Логика Комментариев (Модальное окно) ---
         let currentPostId = null;
@@ -601,19 +678,17 @@ body {
 
         function loadComments(postId) {
             const commentsList = document.getElementById('comments-list');
-            commentsList.innerHTML = ''; // Очистка
+            commentsList.innerHTML = '';
+            // Используем .off() и .on() для переподключения, if нужно слушать только этот пост
+            database.ref(`posting/${postId}/comments`).off('value'); 
             database.ref(`posting/${postId}/comments`).on('value', (snapshot) => {
-                commentsList.innerHTML = ''; // Повторная очистка при получении данных
+                commentsList.innerHTML = '';
                 const comments = snapshot.val();
                 if (comments) {
-                    Object.values(comments).forEach(comment => {
+                    Object.values(comments).reverse().forEach(comment => { // Новые сверху
                         const commentDiv = document.createElement('div');
                         commentDiv.className = 'comment-item';
-                        // Здесь можно было бы добавить имя пользователя, но для простоты просто 'Аноним'
-                        commentDiv.innerHTML = `
-                            <span class="comment-author">Аноним:</span>
-                            <span class="comment-text">${comment.text}</span>
-                        `;
+                        commentDiv.innerHTML = `<span class="comment-author">Аноним:</span><span class="comment-text">${comment.text}</span>`;
                         commentsList.appendChild(commentDiv);
                     });
                 } else {
@@ -632,8 +707,7 @@ body {
                     text: commentText,
                     timestamp: Date.now()
                 }).then(() => {
-                    textInput.value = ''; // Очистка поля ввода
-                    // Комментарии загрузятся автоматически благодаря `on('value', ...)`
+                    textInput.value = '';
                 }).catch(error => {
                     console.error("Ошибка при добавлении комментария:", error);
                 });
@@ -641,18 +715,25 @@ body {
         }
 
         // --- Логика Поиска (Модальное окно) ---
-
-        let allPostsData = {}; // Хранить все посты для поиска
-
         function openSearchModal() {
+            // При открытии поиска, скрываем секции ленты/создания
+            document.getElementById('main-feed-section').classList.remove('active');
+            document.getElementById('create-post-section').classList.remove('active');
+            
+            // Снимаем активность с кнопок, кроме поиска
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelector('.add-button').classList.remove('active');
+            document.querySelector('.nav-item:nth-child(3)').classList.add('active'); // Активируем кнопку поиска
+
             document.getElementById('search-modal').style.display = 'flex';
-            document.getElementById('search-results').innerHTML = ''; // Очистка при открытии
+            document.getElementById('search-results').innerHTML = '';
             document.getElementById('search-input').value = '';
-            // Повторно загружать посты не нужно, они уже в allPostsData
         }
 
         function closeSearchModal() {
             document.getElementById('search-modal').style.display = 'none';
+            // Возвращаемся к главной странице
+            showMainPage();
         }
 
         function filterPosts() {
@@ -661,6 +742,7 @@ body {
             resultsContainer.innerHTML = '';
 
             if (query.length === 0) {
+                resultsContainer.innerHTML = '<div class="no-results">Начните вводить текст для поиска.</div>';
                 return;
             }
 
@@ -679,9 +761,49 @@ body {
             }
         }
 
+        // --- Логика Создания Поста ---
+        function publishPost() {
+            const title = document.getElementById('post-title').value.trim();
+            const imageUrl = document.getElementById('image-url').value.trim();
+            const text = document.getElementById('post-text').value.trim();
+            const publishButton = document.getElementById('publish-button');
 
-        // --- Основная Логика Рендеринга Постов ---
+            if (!title || !imageUrl || !text) {
+                alert('Пожалуйста, заполните все поля.');
+                return;
+            }
 
+            publishButton.disabled = true;
+            publishButton.innerText = 'Публикация...';
+
+            const newPostRef = postsRef.push();
+            newPostRef.set({
+                title: title,
+                imageUrl: imageUrl,
+                text: text,
+                timestamp: Date.now(),
+                likes: 0,
+                dislikes: 0,
+            }).then(() => {
+                // Очистка полей
+                document.getElementById('post-title').value = '';
+                document.getElementById('image-url').value = '';
+                document.getElementById('post-text').value = '';
+                
+                publishButton.disabled = false;
+                publishButton.innerText = 'Опубликовать';
+                
+                alert('Пост успешно опубликован!');
+                showMainPage(); // Переход на главную страницу после публикации
+            }).catch(error => {
+                console.error("Ошибка при публикации:", error);
+                alert('Произошла ошибка при публикации поста.');
+                publishButton.disabled = false;
+                publishButton.innerText = 'Опубликовать';
+            });
+        }
+
+        // --- Основная Логика Рендеринга Постов (без изменений) ---
         function createPostElement(postId, post) {
             const postDiv = document.createElement('div');
             postDiv.className = 'post-card';
@@ -691,6 +813,10 @@ body {
 
             const likeIconFill = isLiked ? 'fill' : 'outlined';
             const dislikeIconFill = isDisliked ? 'fill' : 'outlined';
+
+            // Проверка наличия иконки комментария (для поиска)
+            const commentsRef = database.ref(`posting/${postId}/comments`);
+            let commentCount = 0;
 
             postDiv.innerHTML = `
                 <h2 class="post-title">${post.title}</h2>
@@ -707,7 +833,7 @@ body {
                     </button>
                     <button class="action-button comment-button" onclick="openCommentsModal('${postId}')">
                         <span class="material-symbols-outlined">comment</span>
-                        <span>Комментировать</span>
+                        <span>Комментарии</span>
                     </button>
                 </div>
             `;
@@ -717,17 +843,18 @@ body {
         function renderPosts() {
             const container = document.getElementById('post-feed-container');
             const loadingMessage = document.getElementById('loading-message');
-            container.innerHTML = ''; // Очистка перед загрузкой
+            loadingMessage.style.display = 'block';
+            container.innerHTML = ''; 
 
-            // Получение данных из Firebase
+            // Используем .on('value') для постоянной синхронизации ленты
             postsRef.on('value', (snapshot) => {
                 container.innerHTML = '';
-                loadingMessage.style.display = 'none'; // Скрыть сообщение о загрузке
+                loadingMessage.style.display = 'none';
 
                 const posts = snapshot.val();
 
                 if (posts) {
-                    allPostsData = posts; // Сохраняем для поиска
+                    allPostsData = posts; 
 
                     // Отображаем посты в обратном порядке (самые новые сверху)
                     Object.keys(posts).reverse().forEach(postId => {
@@ -743,8 +870,11 @@ body {
             });
         }
 
-        // Запуск загрузки постов при старте
-        document.addEventListener('DOMContentLoaded', renderPosts);
+        // Запуск при старте
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPosts();
+            showMainPage(); // Убедимся, что открыта главная страница
+        });
 
     </script>
 </body>
